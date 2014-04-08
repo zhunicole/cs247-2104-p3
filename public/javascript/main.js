@@ -24,6 +24,7 @@
     }
     display_msg({m:"Share this url with your friend to join this chat: "+ document.location.origin+"/#"+fb_chat_room_id,c:"red"})
 
+    // set up variables to access firebase data structure
     var fb_new_chat_room = fb_instance.child('chatrooms').child(fb_chat_room_id);
     var fb_instance_users = fb_new_chat_room.child('users');
     var fb_instance_stream = fb_new_chat_room.child('stream');
@@ -172,6 +173,7 @@
     }
     return false;
   }
+
 
   // some handy methods for converting blob to base 64 and vice versa
   // for performance bench mark, please refer to http://jsperf.com/blob-base64-conversion/5
