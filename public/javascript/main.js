@@ -92,7 +92,6 @@ var my_color;
 
 
   function record_reaction(){
-    mediaRecorder.stop();
     mediaRecorder.start(5000);
 
   }
@@ -100,23 +99,6 @@ var my_color;
 
   // creates a message node and appends it to the conversation
   function display_msg(data){
-    var index_of_end_name = data.m.indexOf(": ");
-    if(index_of_end_name == -1) index_of_end_name = 0;
-    var sender_name = data.m.substring(0,index_of_end_name);
-    var message = data.m.substr(index_of_end_name+2);
-
-    //
-    if (sender_name == username || sender_name === "") {
-      $("#conversation").append("<div class='msg' style='color:"+data.c+"'>"+data.m+"</div>");
-    } else {
-      //actual message initially hidden
-      $("#conversation").append("<div class='hidden_msg' style='color:"+data.c+"'>"+data.m+"</div>");
-
-      var obfuscated = "------------";
-      $("#conversation").append("<div class='obfuscated_msg' style='color:"+data.c+"'>"+sender_name+": "+obfuscated+"</div>");
-      document.getElementById("reveal_btn").disabled = false; 
-    }
-
     if(data.v){
       // for video element
       var video = document.createElement("video");
@@ -132,6 +114,23 @@ var my_color;
       video.appendChild(source);
 
       document.getElementById("conversation").appendChild(video);
+    } else {
+      var index_of_end_name = data.m.indexOf(": ");
+      if(index_of_end_name == -1) index_of_end_name = 0;
+      var sender_name = data.m.substring(0,index_of_end_name);
+      var message = data.m.substr(index_of_end_name+2);
+
+      //
+      if (sender_name == username || sender_name === "") {
+        $("#conversation").append("<div class='msg' style='color:"+data.c+"'>"+data.m+"</div>");
+      } else {
+        //actual message initially hidden
+        $("#conversation").append("<div class='hidden_msg' style='color:"+data.c+"'>"+data.m+"</div>");
+
+        var obfuscated = "------------";
+        $("#conversation").append("<div class='obfuscated_msg' style='color:"+data.c+"'>"+sender_name+": "+obfuscated+"</div>");
+        document.getElementById("reveal_btn").disabled = false; 
+      }
     }
   }
 
