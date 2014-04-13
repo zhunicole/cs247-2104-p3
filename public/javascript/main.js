@@ -2,6 +2,8 @@
 // For CS247, Spring 2014
 var username = "";
 var mediaRecorder;
+var fb_instance_stream;
+var my_color;
 
 (function() {
 
@@ -34,8 +36,8 @@ var mediaRecorder;
     // set up variables to access firebase data structure
     var fb_new_chat_room = fb_instance.child('chatrooms').child(fb_chat_room_id);
     var fb_instance_users = fb_new_chat_room.child('users');
-    var fb_instance_stream = fb_new_chat_room.child('stream');
-    var my_color = "#"+((1<<24)*Math.random()|0).toString(16);
+    fb_instance_stream = fb_new_chat_room.child('stream');
+    my_color = "#"+((1<<24)*Math.random()|0).toString(16);
 
     // listen to events
     fb_instance_users.on("child_added",function(snapshot){
@@ -56,11 +58,11 @@ var mediaRecorder;
     // bind submission box
     $("#submission input").keydown(function( event ) {
       if (event.which == 13) {
-        if(has_emotions($(this).val())){
-          fb_instance_stream.push({m:username+": " +$(this).val(), v:cur_video_blob, c: my_color});
-        }else{
+        // if(has_emotions($(this).val())){
+          // fb_instance_stream.push({m:username+": " +$(this).val(), v:cur_video_blob, c: my_color});
+        // }else{
           fb_instance_stream.push({m:username+": " +$(this).val(), c: my_color});
-        }
+        // }
         $(this).val("");
         scroll_to_bottom(0);
       }
@@ -83,6 +85,8 @@ var mediaRecorder;
     }
 
     record_reaction();
+    document.getElementById("reveal_btn").disabled = true; 
+
 
   }
 
@@ -90,6 +94,7 @@ var mediaRecorder;
   function record_reaction(){
     mediaRecorder.stop();
     mediaRecorder.start(5000);
+
   }
 
 
@@ -109,6 +114,7 @@ var mediaRecorder;
 
       var obfuscated = "------------";
       $("#conversation").append("<div class='obfuscated_msg' style='color:"+data.c+"'>"+sender_name+": "+obfuscated+"</div>");
+      document.getElementById("reveal_btn").disabled = false; 
     }
 
     if(data.v){
@@ -180,19 +186,15 @@ var mediaRecorder;
       mediaRecorder.video_height = video_height/2;
 
       mediaRecorder.ondataavailable = function (blob) {
-          // alert("newdata avaiable");
-          console.log("new data avail!");
+          // console.log("new data avail!");
           video_container.innerHTML = "";
 
           // convert data into base 64 blocks
           blob_to_base64(blob,function(b64_data){
             cur_video_blob = b64_data;
+            fb_instance_stream.push({m:username, v:cur_video_blob, c: my_color});
           });
       };
-      // setInterval( function() {
-      //   mediaRecorder.stop();
-      //   mediaRecorder.start(3000);
-      // }, 3000 );
       console.log("connect to media stream!");
     }
 
