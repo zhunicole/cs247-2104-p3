@@ -1,7 +1,9 @@
 // Initial code by Borui Wang, updated by Graham Roth
 // For CS247, Spring 2014
+var username = "";
 
 (function() {
+
 
   var cur_video_blob = null;
   var fb_instance;
@@ -13,7 +15,7 @@
 
   function connect_to_chat_firebase(){
     /* Include your Firebase link here!*/
-    fb_instance = new Firebase("https://sweltering-fire-2098.firebaseio.com/");
+    fb_instance = new Firebase("https://resplendent-fire-6810.firebaseio.com/");
 
     // generate new chatroom id or use existing id
     var url_segments = document.location.href.split("/#");
@@ -22,7 +24,7 @@
     }else{
       fb_chat_room_id = Math.random().toString(36).substring(7);
     }
-    display_msg({m:"Share this url with your friend to join this chat: "+ document.location.origin+"/#"+fb_chat_room_id,c:"red"})
+    display_msg({m:"Share this url with your friend to join this chat -- "+ document.location.origin+"/#"+fb_chat_room_id,c:"red"})
 
     // set up variables to access firebase data structure
     var fb_new_chat_room = fb_instance.child('chatrooms').child(fb_chat_room_id);
@@ -39,7 +41,7 @@
     });
 
     // block until username is answered
-    var username = window.prompt("Welcome, warrior! please declare your name?");
+    username = window.prompt("Welcome, warrior! please declare your name?");
     if(!username){
       username = "anonymous"+Math.floor(Math.random()*1111);
     }
@@ -65,7 +67,23 @@
 
   // creates a message node and appends it to the conversation
   function display_msg(data){
-    $("#conversation").append("<div class='msg' style='color:"+data.c+"'>"+data.m+"</div>");
+    console.log(data);
+    var index_of_end_name = data.m.indexOf(": ");
+    if(index_of_end_name == -1) index_of_end_name = 0;
+    var sender_name = data.m.substring(0,index_of_end_name);
+    var message = data.m.substr(index_of_end_name+2);
+
+    //
+    if (sender_name == username || sender_name === "") {
+      $("#conversation").append("<div class='msg' style='color:"+data.c+"'>"+data.m+"</div>");
+    } else {
+      //actual message initially hidden
+      $("#conversation").append("<div class='hidden_msg' style='color:"+data.c+"'>"+data.m+"</div>");
+
+      var obfuscated = "------------";
+      $("#conversation").append("<div class='obfuscated_msg' style='color:"+data.c+"'>"+sender_name+": "+obfuscated+"</div>");
+    }
+
     if(data.v){
       // for video element
       var video = document.createElement("video");
@@ -79,10 +97,6 @@
       source.type =  "video/webm";
 
       video.appendChild(source);
-
-      // for gif instead, use this code below and change mediaRecorder.mimeType in onMediaSuccess below
-      // var video = document.createElement("img");
-      // video.src = URL.createObjectURL(base64_to_blob(data.v));
 
       document.getElementById("conversation").appendChild(video);
     }
