@@ -1,6 +1,7 @@
 // Initial code by Borui Wang, updated by Graham Roth
 // For CS247, Spring 2014
 var username = "";
+var mediaRecorder;
 
 (function() {
 
@@ -87,9 +88,8 @@ var username = "";
 
 
   function record_reaction(){
-    mediaRecorder.start();
-
-
+    mediaRecorder.stop();
+    mediaRecorder.start(5000);
   }
 
 
@@ -170,7 +170,7 @@ var username = "";
 
       // now record stream in 5 seconds interval
       var video_container = document.getElementById('video_container');
-      var mediaRecorder = new MediaStreamRecorder(stream);
+      mediaRecorder = new MediaStreamRecorder(stream);
       var index = 1;
 
       mediaRecorder.mimeType = 'video/webm';
@@ -181,6 +181,7 @@ var username = "";
 
       mediaRecorder.ondataavailable = function (blob) {
           // alert("newdata avaiable");
+          console.log("new data avail!");
           video_container.innerHTML = "";
 
           // convert data into base 64 blocks
@@ -188,10 +189,10 @@ var username = "";
             cur_video_blob = b64_data;
           });
       };
-      setInterval( function() {
-        mediaRecorder.stop();
-        mediaRecorder.start(3000);
-      }, 3000 );
+      // setInterval( function() {
+      //   mediaRecorder.stop();
+      //   mediaRecorder.start(3000);
+      // }, 3000 );
       console.log("connect to media stream!");
     }
 
