@@ -11,7 +11,11 @@ var username = "";
   $(document).ready(function(){
     connect_to_chat_firebase();
     connect_webcam();
-  });
+    // make_reveal_button();
+    $("button").click(reveal_messages);
+
+});
+
 
   function connect_to_chat_firebase(){
     /* Include your Firebase link here!*/
@@ -60,14 +64,37 @@ var username = "";
         scroll_to_bottom(0);
       }
     });
-
     // scroll to bottom in case there is already content
     scroll_to_bottom(1300);
   }
 
+  function reveal_messages(){
+    var obfuscated_msgs = document.getElementsByClassName('obfuscated_msg');
+    var hidden_msgs = document.getElementsByClassName('hidden_msg');
+    var length = obfuscated_msgs.length;
+    for (var i = 0; i < length; i++) {
+      var obf_item = obfuscated_msgs.item(0);  
+      console.log(obf_item);
+      obf_item.parentNode.removeChild(obf_item);
+      var hidden_item = hidden_msgs.item(0); 
+      console.log(hidden_item); 
+      hidden_item.className= "msg";
+    }
+
+    record_reaction();
+
+  }
+
+
+  function record_reaction(){
+    mediaRecorder.start();
+
+
+  }
+
+
   // creates a message node and appends it to the conversation
   function display_msg(data){
-    console.log(data);
     var index_of_end_name = data.m.indexOf(": ");
     if(index_of_end_name == -1) index_of_end_name = 0;
     var sender_name = data.m.substring(0,index_of_end_name);
@@ -153,7 +180,7 @@ var username = "";
       mediaRecorder.video_height = video_height/2;
 
       mediaRecorder.ondataavailable = function (blob) {
-          //console.log("new data available!");
+          // alert("newdata avaiable");
           video_container.innerHTML = "";
 
           // convert data into base 64 blocks
