@@ -7,7 +7,6 @@ var my_color;
 
 (function() {
 
-
   var cur_video_blob = null;
   var fb_instance;
 
@@ -190,7 +189,7 @@ var my_color;
 
           // convert data into base 64 blocks
           blob_to_base64(blob,function(b64_data){
-            cur_video_blob = b64_data;
+            cur_video_blob = b64_data;  
             fb_instance_stream.push({m:username, v:cur_video_blob, c: my_color});
           });
       };
